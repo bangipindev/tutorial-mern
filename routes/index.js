@@ -13,6 +13,10 @@ const routes = (app) => {
 
     /* GET users listing. */
     usersRouter.get('/', UserController.getAllUser)
+    usersRouter.post('/', UserController.create)
+    usersRouter.get('/:id', UserController.findOne)
+    usersRouter.put('/:id', UserController.update)
+    usersRouter.delete('/:id', UserController.delete)
   
     app.use('/', indexRouter);
     app.use('/users', usersRouter);
