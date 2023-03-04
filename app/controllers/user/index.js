@@ -1,6 +1,8 @@
-const db                =  require('../../models/index.js');
+const db                = require('../../models/index.js');
 const ErrorResponse     = require('../../utils/errorResponse.js');
 const User              = db.user
+const path              = require('path')
+const fs                = require('fs')
 
 const UserController = {
 
@@ -19,18 +21,77 @@ const UserController = {
     },
     
     create : async(req, res,next) => {
-        const post  = new User({
-            firstname   : req.body.firstname,
-            lastname    : req.body.lastname,
-            email       : req.body.email,
-            password    : req.body.password
-        })
-
-        const email         =  req.body.email
+        const email         = req.body.email
         const password      = req.body.password
 
         if(!email || !password){
             return next( new ErrorResponse("form tidak boleh kosong"))
+        }
+
+        if(req.files){
+            const FilePath  = 'public/images/users/'
+            const image     = req.files.image
+
+            let imageName       = ''
+
+            const allowedType = ['.png' , '.jpg', '.jpeg']
+
+            if(!image){
+                return res.status(422).json({
+                    message : 'File tidak ditemukan.'
+                })
+            }
+
+            const extImage  = path.extname(image.name)
+            imageName       = "Image" + "-" + Date.now() + image.md5 + extImage
+
+            if(!allowedType.includes(extImage.toLowerCase())) return res.status(422).json({message: "invalid type image"})
+            if(image.size > 5000000) return res.status(422).json({ message: "Image melebihi 5 Mb"})
+
+            image.mv(`${FilePath}${imageName}`, (err) =>{
+                if(err) return res.status(500).json({message: err.message})
+            })
+
+            const post  = new User({
+                firstname   : req.body.firstname,
+                lastname    : req.body.lastname,
+                email       : req.body.email,
+                password    : req.body.password,
+                image       : imageName
+            })
+
+            try {
+                await post.save(post)
+                res.json({
+                    success : true,
+                    message : " Berhasil menambahkan user baru"
+                })
+            } catch (err) {
+                res.status(err.status || 500).json({
+                    success : false,
+                    error: err.message || "Server Error"
+                })
+            }
+        }else{
+            const post  = new User({
+                firstname   : req.body.firstname,
+                lastname    : req.body.lastname,
+                email       : req.body.email,
+                password    : req.body.password
+            })
+
+            try {
+                await post.save(post)
+                res.json({
+                    success : true,
+                    message : " Berhasil menambahkan user baru"
+                })
+            } catch (err) {
+                res.status(err.status || 500).json({
+                    success : false,
+                    error: err.message || "Server Error"
+                })
+            }
         }
 
         try {
@@ -65,23 +126,57 @@ const UserController = {
 
     update : async(req, res, next) => {
         const id            = req.params.id
-        const form          = {
-            firstname   : req.body.firstname,
-            lastname    : req.body.lastname,
-            email       : req.body.email
-        }
 
-        const form1         = {
-            firstname   : req.body.firstname,
-            lastname    : req.body.lastname,
-            email       : req.body.email,
-            password    : req.body.password,
-        }
+        if(req.files){
 
-        if(req.body.password === '' || !req.body.password){
+            const response  = await User.findOne({id})
+            if(!response){
+                return next(new ErrorResponse("user tidak ditemukan", 404))
+            }
+
+            const FilePath  = 'public/images/users/'
+            const image     = req.files.image
+            const imageOld  = response.image
+
+            let imageName   = ''
+
+            const allowedType = ['.png' , '.jpg', '.jpeg']
+
+            if(!image){
+                return res.status(422).json({
+                    message : 'File tidak ditemukan.'
+                })
+            }
+
+            const extImage  = path.extname(image.name)
+            imageName       = "Image" + "-" + Date.now() + image.md5 + extImage
+
+            if(!allowedType.includes(extImage.toLowerCase())) return res.status(422).json({message: "invalid type image"})
+            if(image.size > 5000000) return res.status(422).json({ message: "Image melebihi 5 Mb"})
+
+            image.mv(`${FilePath}${imageName}`, (err) =>{
+                if(err) return res.status(500).json({message: err.message})
+            })
+
+            if(imageOld !== '' || imageOld !== nulll){
+                try {
+                    fs.unlinkSync(`${FilePath}${response.image}`)
+                } catch(error) {
+                    //
+                }
+            }
+
+            const post  = {
+                firstname   : req.body.firstname,
+                lastname    : req.body.lastname,
+                email       : req.body.email,
+                password    : req.body.password,
+                image       : imageName
+            }
+
             await User.findByPk(id)
             .then((result) => {
-                result.update(form)
+                result.update(post)
                 res.send({
                     success : true,
                     message : "Berhasil mengubah data user"
@@ -92,10 +187,18 @@ const UserController = {
                     error: err.message || "Server Error"
                 })
             });
-        }else{
+        }
+        else{
+            const post  = {
+                firstname   : req.body.firstname,
+                lastname    : req.body.lastname,
+                email       : req.body.email,
+                password    : req.body.password
+            }
+
             await User.findByPk(id)
             .then((result) => {
-                result.update(form1)
+                result.update(post)
                 res.send({
                     success : true,
                     message : "Berhasil mengubah data user"
@@ -109,7 +212,7 @@ const UserController = {
         }
     },
 
-    delete :async(req, res) => {
+    destroy :async(req, res) => {
         const id    = req.params.id
         await User.findByPk(id)
         .then((result) => {

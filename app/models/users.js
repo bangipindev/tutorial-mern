@@ -30,11 +30,15 @@ module.exports  = (sequelize, DataTypes) => {
       required: [true, "password harus di isi"],
       minlength: 6,
       select: false,
-    }
+    },
+    image: {
+      type : DataTypes.STRING
+    },
   }, {
     sequelize,
     modelName: 'Users',
     timestamps : true,
+    paranoid: true,
     freezeTableName :  true,
     hooks: {
       beforeCreate : async(user) => {

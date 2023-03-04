@@ -20,6 +20,9 @@ module.exports = {
       password: {
         type: Sequelize.STRING
       },
+      image: {
+        type: Sequelize.STRING
+      },
       createdAt: {
         field: 'created_at',
         allowNull: false,
@@ -27,6 +30,11 @@ module.exports = {
       },
       updatedAt: {
         field: 'updated_at',
+        allowNull: false,
+        type: Sequelize.DATE
+      },
+      deletedAt: {
+        field: 'deleted_at',
         allowNull: false,
         type: Sequelize.DATE
       }

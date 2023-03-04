@@ -16,7 +16,7 @@ const routes = (app) => {
     usersRouter.post('/', UserController.create)
     usersRouter.get('/:id', UserController.findOne)
     usersRouter.put('/:id', UserController.update)
-    usersRouter.delete('/:id', UserController.delete)
+    usersRouter.delete('/:id', UserController.destroy)
   
     app.use('/', indexRouter);
     app.use('/users', usersRouter);
