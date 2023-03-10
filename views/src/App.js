@@ -1,14 +1,11 @@
 import React from 'react'
-
 import './App.css'
+import Router from './router'
 
 const App = () => {
-    return (
-      <div>
-          <h1 style={{color:"red",fontSize:"80px"}}> Bang Ipin Dev </h1>
-          <h1 className='TextHeading'> Youtube </h1>
-      </div>
-    )
+  return (
+      <Router />
+  )
 }
 
 export default App
