@@ -3,7 +3,7 @@ const express         = require('express');
 const path            = require('path');
 const cookieParser    = require('cookie-parser');
 const logger          = require('morgan');
-
+const cors            = require('cors');
 const fileUpload      = require('express-fileupload')
 
 const dotenv          = require('dotenv')
@@ -24,12 +24,14 @@ db.sync({force: false}).then(() => {
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
+app.use(cors({credentials: true, origin: 'http://localhost:3000' }))
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(fileUpload())
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.dirname('public')));
+// app.use(express.static(path.join(__dirname, 'public')));
 
 
 routes(app)

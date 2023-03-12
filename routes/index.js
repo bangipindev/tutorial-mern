@@ -19,7 +19,7 @@ const routes = (app) => {
     usersRouter.delete('/:id', UserController.destroy)
   
     app.use('/', indexRouter);
-    app.use('/users', usersRouter);
+    app.use('/api/users', usersRouter);
 }
 
 module.exports = routes;
