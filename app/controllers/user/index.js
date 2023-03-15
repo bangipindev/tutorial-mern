@@ -38,6 +38,7 @@ const UserController = {
 
             if(!image){
                 return res.status(422).json({
+                    success: false, 
                     message : 'File tidak ditemukan.'
                 })
             }
@@ -45,11 +46,11 @@ const UserController = {
             const extImage  = path.extname(image.name)
             imageName       = "Image" + "-" + Date.now() + image.md5 + extImage
 
-            if(!allowedType.includes(extImage.toLowerCase())) return res.status(422).json({message: "invalid type image"})
-            if(image.size > 5000000) return res.status(422).json({ message: "Image melebihi 5 Mb"})
+            if(!allowedType.includes(extImage.toLowerCase())) return res.status(422).json({success: false, message: "invalid type image"})
+            if(image.size > 5000000) return res.status(422).json({ success: false, message: "Image melebihi 5 Mb"})
 
             image.mv(`${FilePath}${imageName}`, (err) =>{
-                if(err) return res.status(500).json({message: err.message})
+                if(err) return res.status(500).json({success: false, message: err.message})
             })
 
             const post  = new User({

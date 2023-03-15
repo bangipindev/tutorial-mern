@@ -7,6 +7,7 @@ import PublicRoute from "../middleware/PublicRoute";
 import Home from "../pages/home";
 import Profile from "../pages/profile";
 import User from "../pages/user";
+import AddUser from "../pages/user/Add";
 
 const router = createBrowserRouter([
     {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
                 path: "/user",
                 element: <User />,
             },
+            {
+                path: "/user/add",
+                element: <AddUser />,
+            }
         ],
     },
 ]);

@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { Col, Container, Row, Table } from 'react-bootstrap'
+import { Button, Col, Container, Row, Table } from 'react-bootstrap'
 import axios from 'axios'
 import { BASE_URL } from '../../actions/types'
+import { Link } from 'react-router-dom'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faPlus} from '@fortawesome/free-solid-svg-icons'
 
 // const data = [
 //     {
@@ -51,37 +54,38 @@ const User = () => {
             <Container>
                 <Row>
                     <Col>
-                        <div className='mt-5'>
-                            <Table striped bordered hover>
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>First Name</th>
-                                        <th>Last Name</th>
-                                        <th>Email</th>
-                                        <th>Image</th>
-                                        <th>Action</th>
+                        <Link to="/user/add">
+                            <Button className={'btn btn-info mb-2 mt-2'}><FontAwesomeIcon icon={faPlus} /> Tambah</Button>
+                        </Link>
+                        <Table striped bordered hover>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Email</th>
+                                    <th>Image</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                { data && data.map((item) => (
+                                    <tr key={item.id}>
+                                        <td>{item.id}</td>
+                                        <td>{item.firstname}</td>
+                                        <td>{item.lastname}</td>
+                                        <td>{item.email}</td>
+                                        <td>
+                                            <img src={`${BASE_URL}/public/images/users/${item.image}`} alt={item.firstname} width={'100'} height={'100'} />
+                                        </td>
+                                        <td>
+                                            <button className={'btn btn-info btn-md mx-3'} onClick={handleEdit} > Edit </button>
+                                            <button className={'btn btn-danger btn-md mx-3'} onClick={handleDestroy}> Hapus </button>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    { data && data.map((item) => (
-                                        <tr key={item.id}>
-                                            <td>{item.id}</td>
-                                            <td>{item.firstname}</td>
-                                            <td>{item.lastname}</td>
-                                            <td>{item.email}</td>
-                                            <td>
-                                                <img src={`${BASE_URL}/public/images/users/${item.image}`} alt={item.firstname} width={'100'} height={'100'} />
-                                            </td>
-                                            <td>
-                                                <button className={'btn btn-info btn-md mx-3'} onClick={handleEdit} > Edit </button>
-                                                <button className={'btn btn-danger btn-md mx-3'} onClick={handleDestroy}> Hapus </button>
-                                            </td>
-                                        </tr>
-                                    ))} 
-                                </tbody>
-                            </Table>
-                        </div>
+                                ))} 
+                            </tbody>
+                        </Table>
                     </Col>
                 </Row>
             </Container>
