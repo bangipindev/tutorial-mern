@@ -126,6 +126,7 @@ const UserController = {
     },
 
     update : async(req, res, next) => {
+        console.log(req.body)
         const id            = req.params.id
 
         if(req.files){

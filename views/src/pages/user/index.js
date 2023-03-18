@@ -79,7 +79,7 @@ const User = () => {
                                             <img src={`${BASE_URL}/public/images/users/${item.image}`} alt={item.firstname} width={'100'} height={'100'} />
                                         </td>
                                         <td>
-                                            <button className={'btn btn-info btn-md mx-3'} onClick={handleEdit} > Edit </button>
+                                            <Link to={`/user/edit/${item.id}`} className={'btn btn-info btn-md mx-3'} > Edit </Link>
                                             <button className={'btn btn-danger btn-md mx-3'} onClick={handleDestroy}> Hapus </button>
                                         </td>
                                     </tr>
