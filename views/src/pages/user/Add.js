@@ -55,7 +55,7 @@ const AddUser = () => {
             },2000)
             // console.log(response.data.message)
         }).catch((err) => {
-            toast.success(err.response.data.message)
+            toast.error(err.response.data.message)
             // console.log(err.response.data.message)
         })
     }

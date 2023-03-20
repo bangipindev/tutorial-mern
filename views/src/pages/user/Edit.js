@@ -69,7 +69,7 @@ const EditUser = () => {
                 navigate('/user')
             },2000)
         }).catch((err) => {
-            toast.success(err.response.data.message)
+            toast.error(err.response.data.message)
         })
     }
 

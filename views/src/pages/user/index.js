@@ -1,41 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Col, Container, Row, Table } from 'react-bootstrap'
 import axios from 'axios'
-import { BASE_URL } from '../../actions/types'
+import { API_URL, BASE_URL } from '../../actions/types'
 import { Link } from 'react-router-dom'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faPlus} from '@fortawesome/free-solid-svg-icons'
+import { toast } from 'react-toastify'
+import Swal from 'sweetalert2'
 
-// const data = [
-//     {
-//         id          : 1,
-//         firstname   : "Hasan",
-//         lastname    : "Bakri",
-//         email       : "hasanbakri@gmail.com",
-//         image       : "image.png"
-//     },
-//     {
-//         id          : 2,
-//         firstname   : "Hasan",
-//         lastname    : "Bakri",
-//         email       : "hasanbakri@gmail.com",
-//         image       : "image.png"
-//     },
-//     {
-//         id          : 3,
-//         firstname   : "Hasan",
-//         lastname    : "Bakri",
-//         email       : "hasanbakri@gmail.com",
-//         image       : "image.png"
-//     }
-// ];
-
-const handleEdit = () => {
-    return alert('Data siap di edit !')
-}
-const handleDestroy = () => {
-    return alert('Data siap di hapus !')
-}
 const User = () => {
 
     const[ data, setData ] = useState([])
@@ -48,6 +20,43 @@ const User = () => {
         const response = await axios.get(`http://localhost:5555/api/users`)
         // console.log(response.data.data)
         setData(response.data.data)
+    }
+
+    
+    const handleDestroy = (id) => {
+        return (
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText:'No, Cancel',
+                reverseButtons: true
+            })
+            .then((e) => {
+                if (e.isConfirmed) {
+                    axios.delete(`${API_URL}/users/${id}`)
+                    .then((result) => {
+                        Swal.fire(
+                            'Deleted!',
+                            result.data.message,
+                            'success'
+                        )
+                        // toast.success(result.data.message)
+                        setTimeout(() => {
+                            fetchUser()
+                        },2000)
+                    }).catch((err)=>{
+                        toast.error(err.response.data.message)
+                    })
+                    
+                }else if (e.dismiss === 'cancel') {
+                    Swal.fire('Batal', 'upps.. tidak jadi :)','error')
+                }
+            })
+            
+        )
     }
     return (
         <>
@@ -80,7 +89,7 @@ const User = () => {
                                         </td>
                                         <td>
                                             <Link to={`/user/edit/${item.id}`} className={'btn btn-info btn-md mx-3'} > Edit </Link>
-                                            <button className={'btn btn-danger btn-md mx-3'} onClick={handleDestroy}> Hapus </button>
+                                            <Link to="#" className={'btn btn-danger btn-md mx-3'} onClick={() => handleDestroy(item.id)}> Hapus </Link>
                                         </td>
                                     </tr>
                                 ))} 
